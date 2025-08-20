@@ -40,16 +40,6 @@ handle_int() {
     exit 1
 }
 
-# Make sure we are running as root
-if [[ $EUID -ne 0 ]]; then
-    # If we are not running as root, try to relaunch ourselves as root
-    echo -e "${BNC}Testing root access...${NC}"
-    sudo bash -c "USERNAME=${USERNAME} GIT_USER=${GIT_USER} EMAIL=${EMAIL} USER_COMMENT=${USER_COMMENT} USER_PICTURE_URL=${USER_PICTURE_URL} PASSWORD=${PASSWORD} ${script_dir}/${script_name}"
-	exit $?
-else
-	echo -e "${BNC}Root access obtained.${NC}"
-fi
-
 # Ask the user to input PASSWORD if not set
 if [ -z "${USERNAME}" ] || [ ${USERNAME} = "root" ]; then
     read -p "Username: " USERNAME
@@ -70,14 +60,24 @@ if ! id "${USERNAME}" >/dev/null 2>&1; then
 	fi
 	echo ""
 fi
-if [ -z ${EMAIL} ]; then
+if [ -z "${EMAIL}" ]; then
 	EMAIL=$(git config --global user.email)
-	if [ -z ${EMAIL} ]; then
+	if [ -z "${EMAIL}" ]; then
 		read -p "Email: " EMAIL
 	fi
 fi
 if [ -z "${USER_PICTURE_URL}" ] && [ ! -f "/var/lib/AccountsService/icons/${USERNAME}" ]; then
 	read -p "User profile picture URL (leave blank for none): " USER_PICTURE_URL
+fi
+
+# Make sure we are running as root
+if [[ $EUID -ne 0 ]]; then
+    # If we are not running as root, try to relaunch ourselves as root
+    echo -e "${BNC}Testing root access...${NC}"
+    sudo bash -c "USERNAME=${USERNAME} GIT_USER=${GIT_USER} EMAIL=${EMAIL} USER_COMMENT=${USER_COMMENT} USER_PICTURE_URL=${USER_PICTURE_URL} PASSWORD=${PASSWORD} ${script_dir}/${script_name}"
+	exit $?
+else
+	echo -e "${BNC}Root access obtained.${NC}"
 fi
 
 # Detect distribution
