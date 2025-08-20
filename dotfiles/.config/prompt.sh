@@ -27,6 +27,7 @@ parse_kubernetes_context()
 	ctx=$(kubectx -c 2>/dev/null)
 	if [ $? -ne 0 ]; then
 		echo ""
+		return
 	fi
 
 	if [ "$ctx" = "default" ]; then
