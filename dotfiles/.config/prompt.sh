@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+source /etc/os-release
+
 parse_git_branch()
 {
 	branch=$(git branch 2> /dev/null | sed -e '/^[^*]/d' -e 's/* \(.*\)/ <\1>/')
@@ -22,7 +24,11 @@ parse_docker_context()
 
 parse_kubernetes_context()
 {
-	ctx=$(kubectx -c)
+	ctx=$(kubectx -c 2>/dev/null)
+	if [ $? -ne 0 ]; then
+		echo ""
+	fi
+
 	if [ "$ctx" = "default" ]; then
 		echo ""
 	else
@@ -40,6 +46,12 @@ kernel_installed_version() {
 }
 
 PROMPT_NEED_REBOOT() {
+	# Ignore that part of the prompt on non-arch distribution
+	if ! [ "${ID}" = "arch" ]; then
+		echo ""
+		return
+	fi
+
 	live=$(kernel_live_version)
 	installed=$(kernel_installed_version)
 	if [ "$live" = "$installed" ]; then
