@@ -174,9 +174,9 @@ if [[ $i = $total ]]; then
 	echo ""
 fi
 
-# Install dotfiles
+# Install dotfiles, without overwriting
 echo "Installing dotfiles..."
-cp -r ${script_dir}/dotfiles/. /home/${USERNAME}/
+cp -r -n ${script_dir}/dotfiles/. /home/${USERNAME}/
 cat ${script_dir}/dotfiles/.config/git/config | envsubst '$GIT_USER $EMAIL' >/home/${USERNAME}/.config/git/config
 
 # TODO: Setup GRUB theme
