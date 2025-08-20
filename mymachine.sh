@@ -90,7 +90,7 @@ fi
 echo -e "${BNC}Detected distribution ${NAME} (${ID})${NC}"
 
 # Initial configuration step
-source ${current_dir}/distribution/${ID}/initial_config.sh
+source ${script_dir}/distribution/${ID}/initial_config.sh
 
 # Change directory to user home
 cd /home/${USERNAME}/
@@ -103,7 +103,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # Install packages
-source ${current_dir}/distribution/${ID}/install.sh
+source ${script_dir}/distribution/${ID}/install.sh
 install_package() {
 	package="${1}"
 	command="${2}"
