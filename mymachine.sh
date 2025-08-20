@@ -136,6 +136,7 @@ done
 echo ""
 
 # Install distribution-specific extra packages
+echo -e "Initializing extra package installation..."
 extra_init
 echo -ne "${EXTRA_INSTALL_MESSAGE}...  "
 for package in "${EXTRA_PACKAGES[@]}"; do
