@@ -71,9 +71,9 @@ configure_wallpapers_settings() {
         git clone --depth 1 https://github.com/vhaudiquet/wallpapers "/home/${USERNAME}/Images/Wallpapers"
     fi
 
-    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpapers/slideshow-directory "'/home/${USERNAME}/Images/Wallpapers'"
-    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpapers/slideshow-queue-sort-type "'A-Z'"
-    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpapers/slideshow-slide-duration "(1, 0, 0)"
+    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpaper/slideshow-directory "'/home/${USERNAME}/Images/Wallpapers'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpaper/slideshow-queue-sort-type "'A-Z'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpaper/slideshow-slide-duration "(1, 0, 0)"
 }
 
 configure_misc_settings() {
