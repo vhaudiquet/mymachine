@@ -254,6 +254,11 @@ export EXTRA_INSTALL_MESSAGE="Installing AUR packages with yay"
 extra_init() {
 	install_microcode
 	install_yay
+
+	# Configure keymap
+    echo "KEYMAP=${KEYMAP}" >/etc/vconsole.conf
+    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/input-sources/sources "[('xkb', '${KEYMAP}')]"
+    localectl set-x11-keymap ${KEYMAP}
 }
 
 extra_finish() {

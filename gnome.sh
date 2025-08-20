@@ -39,11 +39,6 @@ configure_gnome_settings() {
     'spotify.desktop', 'spotify_spotify.desktop', \
     'bitwarden.desktop', 'bitwarden_bitwarden.desktop',\
     'OrcaSlicer.desktop']"
-
-    # Configure keymap
-    echo "KEYMAP=${KEYMAP}" >/etc/vconsole.conf
-    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/input-sources/sources "[('xkb', '${KEYMAP}')]"
-    localectl set-x11-keymap ${KEYMAP}
 }
 
 configure_dash2dock_settings() {
@@ -69,6 +64,21 @@ configure_dash2dock_settings() {
     ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/dash-to-dock/show-show-apps-button true
     ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/dash-to-dock/show-trash false
     ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/dash-to-dock/transparency-mode "'FIXED'"
+}
+
+configure_wallpapers_settings() {
+    if ! [ -d "/home/${USERNAME}/Images/Wallpapers" ]; then 
+        git clone --depth 1 https://github.com/vhaudiquet/wallpapers "/home/${USERNAME}/Images/Wallpapers"
+    fi
+
+    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpapers/slideshow-directory "'/home/${USERNAME}/Images/Wallpapers'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpapers/slideshow-queue-sort-type "'A-Z'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/azwallpapers/slideshow-slide-duration "(1, 0, 0)"
+}
+
+configure_misc_settings() {
+    # Brightness control using ddcutil
+    ${DBUS_LAUNCH} dconf write /org/gnome/shell/extensions/display-brightness-ddcutil/button-location 1
 }
 
 enable_extension_uuid() {
@@ -162,3 +172,4 @@ echo "Setting up Gnome settings..."
 
 configure_gnome_settings
 configure_dash2dock_settings
+configure_wallpapers_settings
