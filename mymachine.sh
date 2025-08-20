@@ -95,11 +95,13 @@ source ${script_dir}/distribution/${ID}/initial_config.sh
 # Change directory to user home
 cd /home/${USERNAME}/
 
-# Authorize members of group ${WHEEL_GROUP} to sudo, without password
-echo "%${WHEEL_GROUP} ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
-if [ $? -ne 0 ]; then
-	echo "Failed to edit /etc/sudoers"
-	return 1 2>/dev/null || exit 1
+# Authorize members of group ${WHEEL_GROUP} to sudo, without password (if needed)
+if ! [[ "$(tail -n 1 /etc/sudoers)" = "%${WHEEL_GROUP} ALL=(ALL:ALL) NOPASSWD: ALL" ]]; then
+	echo "%${WHEEL_GROUP} ALL=(ALL:ALL) NOPASSWD: ALL" >> /etc/sudoers
+	if [ $? -ne 0 ]; then
+		echo -e "${BRed}Failed to edit /etc/sudoers. Terminating.${NC}"
+		exit 1
+	fi
 fi
 
 # Install packages
@@ -209,4 +211,4 @@ if [ "$MICROCODE_INSTALLED" == "false" ]; then
 fi
 echo "To use WireGuard, don't forget to add this client on VPN server (your private key is under ~/.wireguard/privatekey)"
 echo "To use GitHub, you need to use 'gh auth login' to connect to GitHub"
-echo -e "${BNC}Goodbye !${NC}"
+echo -e "${BNC}Goodbye ! Make sure to ${BGreen}reboot${BNC} to apply all changes !${NC}"
