@@ -176,7 +176,7 @@ fi
 
 # Install dotfiles, without overwriting
 echo "Installing dotfiles..."
-cp -r -n ${script_dir}/dotfiles/. /home/${USERNAME}/
+cp -r --update=none ${script_dir}/dotfiles/. /home/${USERNAME}/
 cat ${script_dir}/dotfiles/.config/git/config | envsubst '$GIT_USER $EMAIL' >/home/${USERNAME}/.config/git/config
 
 # TODO: Setup GRUB theme
