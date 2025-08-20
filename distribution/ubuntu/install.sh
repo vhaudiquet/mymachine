@@ -71,7 +71,8 @@ install_extra_command() {
 
 refresh_package_db() {
   # Refresh apt db
-  apt-get update
+  echo -e "Refreshing apt database..."
+  apt-get update >/dev/null 2>&1
 }
 
 export EXTRA_INSTALL_MESSAGE="Installing snap packages"
