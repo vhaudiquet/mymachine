@@ -1,0 +1,30 @@
+{
+    "workbench.colorTheme": "One Dark Pro",
+    "workbench.iconTheme": "material-icon-theme",
+    "workbench.productIconTheme": "adwaita",
+    "window.zoomLevel": 2,
+    "editor.fontFamily": "'Ligconsolata', 'monospace', monospace",
+    "editor.fontLigatures": true,
+    "editor.inlineSuggest.enabled": true,
+    "git.confirmSync": false,
+    "diffEditor.ignoreTrimWhitespace": false,
+    "editor.formatOnSave": false,
+    "github.copilot.enable": {
+        "*": false
+    },
+    "explorer.confirmDelete": false,
+    "workbench.editorAssociations": {
+        "*.pdf": "latex-workshop-pdf-hook"
+    },
+    "workbench.startupEditor": "none",
+    "[c]": {
+        "editor.defaultFormatter": "xaver.clang-format"
+    },
+    "window.titleBarStyle": "custom",
+    "window.commandCenter": true,
+    "window.autoDetectColorScheme": true,
+    "workbench.preferredDarkColorTheme": "Adwaita Dark",
+    "workbench.preferredLightColorTheme": "Adwaita Light",
+    "editor.renderLineHighlight": "none",
+    "workbench.tree.indent": 12
+}

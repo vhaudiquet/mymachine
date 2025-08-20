@@ -1,0 +1,129 @@
+#!/usr/bin/env bash
+
+PACKAGES=(
+  # Basic utils
+  sudo
+  wget
+  curl
+  jq
+  apt-transport-https
+  ca-certificates
+  gnupg
+  # Micro (text editor)
+  micro
+  xclip
+  wl-clipboard
+  # Gnome extra
+  gnome-shell-extension-manager
+  gnome-tweaks
+  file-roller
+  gnome-sushi
+  # ddcutil, for monitor brightness
+  ddcutil
+  # Git and essential building tools
+  git
+  build-essential
+  # clang (for clang-format at least)
+  clang
+  # Communication
+  polari
+  # Fonts
+  fonts-firacode
+  fonts-inconsolata
+  fonts-roboto
+  fonts-dejavu
+  fonts-cantarell
+  fonts-noto
+  # Mail client (geary)
+  geary
+  # Photo/graphics utils
+  inkscape
+  gimp
+  darktable
+  # LaTeX
+  texlive
+  # Video utils
+  mpv
+  vlc
+  # NFS
+  nfs-common
+  # Wireguard usermode tools
+  wireguard-tools
+  # QEMU
+  qemu-system
+)
+
+EXTRA_PACKAGES=(
+  discord
+  fractal
+  wasistlos
+  revolt-desktop
+  bitwarden
+  spotify
+)
+
+install_package_command() {
+	apt-get install -y "${1}" >/dev/null 2>&1
+}
+install_extra_command() {
+  snap install "${1}" >/dev/null 2>&1
+}
+
+refresh_package_db() {
+  # Refresh apt db
+  apt-get update
+}
+
+export EXTRA_INSTALL_MESSAGE="Installing snap packages"
+extra_init() {
+  # Install ghostty
+  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo -e "${BRed}Could not install ghostty. Skipping.${NC}"
+  fi
+
+  # TODO: Install code-oss, and features+marketplace
+  # TODO: Install jellyfin-media-player
+  # TODO: Install android-studio
+  # TODO: Install zen browser
+
+  # GitHub CLI
+  mkdir -p -m 755 /etc/apt/keyrings \
+  && out=$(mktemp) && wget -nv -O$out https://cli.github.com/packages/githubcli-archive-keyring.gpg \
+  && cat $out | tee /etc/apt/keyrings/githubcli-archive-keyring.gpg > /dev/null \
+  && chmod go+r /etc/apt/keyrings/githubcli-archive-keyring.gpg \
+  && mkdir -p -m 755 /etc/apt/sources.list.d \
+  && echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null \
+  && apt update \
+  && apt install gh -y
+  if [ $? -ne 0 ]; then
+    echo -e "${BRed}Could not install github-cli. Skipping.${NC}"
+  fi
+
+  # Docker, Kubectl
+  curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+  chmod a+r /etc/apt/keyrings/docker.asc
+  echo \
+    "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+    $(. /etc/os-release && echo "${UBUNTU_CODENAME:-$VERSION_CODENAME}") stable" | \
+    tee /etc/apt/sources.list.d/docker.list > /dev/null
+  apt-get update
+  apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+  if [ $? -ne 0 ]; then
+    echo -e "${BRed}Could not install docker. Skipping.${NC}"
+  fi
+
+  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
+  chmod 644 /etc/apt/sources.list.d/kubernetes.list
+  apt-get update
+  apt-get install -y kubectl
+  if [ $? -ne 0 ]; then
+    echo -e "${BRed}Could not install kubectl. Skipping.${NC}"
+  fi
+}
+
+extra_finish() {
+  echo -ne ""
+}
