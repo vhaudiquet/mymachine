@@ -119,7 +119,7 @@ extra_init() {
   # TODO: Install jellyfin-media-player
   
   # Install android-studio
-  sudo snap install android-studio --classic
+  sudo snap install android-studio --classic >/dev/null 2>&1
 
   # TODO: Install zen browser
 

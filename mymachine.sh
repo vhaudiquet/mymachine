@@ -153,8 +153,12 @@ source "${script_dir}/gnome.sh"
 # Create gnome/gdm user info file
 if ! [ -z "${USER_PICTURE_URL}" ]; then
 	echo "Downloading user profile picture..."
-    curl -L -o "/var/lib/AccountsService/icons/${USERNAME}" "${USER_PICTURE_URL}"
-    echo -e "[User]\nSession=\nIcon=/var/lib/AccountsService/icons/${USERNAME}\nSystemAccount=false\n" > /var/lib/AccountsService/users/${USERNAME}
+    curl -L -o "/var/lib/AccountsService/icons/${USERNAME}" "${USER_PICTURE_URL}" >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		echo -e "${BRed}Could not download user profile picture. Skipping.${NC}"
+	else
+    	echo -e "[User]\nSession=\nIcon=/var/lib/AccountsService/icons/${USERNAME}\nSystemAccount=false\n" > /var/lib/AccountsService/users/${USERNAME}
+	fi
 fi
 
 # Install VSCode extensions
