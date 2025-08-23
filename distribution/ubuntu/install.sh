@@ -117,7 +117,10 @@ extra_init() {
 
   # TODO: Install code-oss, and features+marketplace
   # TODO: Install jellyfin-media-player
-  # TODO: Install android-studio
+  
+  # Install android-studio
+  sudo snap install android-studio --classic
+
   # TODO: Install zen browser
 
   install_github_cli >/dev/null 2>&1
