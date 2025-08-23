@@ -185,15 +185,23 @@ echo "Installing dotfiles..."
 cp -r --update=none ${script_dir}/dotfiles/. /home/${USERNAME}/
 cat ${script_dir}/dotfiles/.config/git/config | envsubst '$GIT_USER $EMAIL' >/home/${USERNAME}/.config/git/config
 
-# TODO: Setup GRUB theme
+# Setup GRUB theme
 echo "Setting up GRUB theme..."
-# $YCMD | pacman -S grub-theme-vimix
-# sed -i 's/#GRUB_THEME=\"\/path\/to\/gfxtheme\"/GRUB_THEME=\"\/usr\/share\/grub\/themes\/Vimix\/theme.txt\"/' /etc/default/grub
-# if [ $? -ne 0 ]; then
-# 	echo "Failed to edit /etc/default/grub (to enable grub theme)"
-# 	return 1 2>/dev/null || exit 1
-# fi
+git clone https://github.com/vinceliuice/grub2-themes >/dev/null 2>&1
+if [ $? -ne 0 ]; then
+	echo -e "${BRed}Could not download grub2 theme. Skipping.${NC}"
+else
+	# TODO: auto-detect screen resolution
+	cd grub2-themes && chmod +x install.sh && ./install.sh -t vimix >/dev/null 2>&1 && cd ..
+	if [ $? -ne 0 ]; then
+		echo -e "${BRed}Could not install grub2 theme. Skipping.${NC}"
+	fi
+	rm -rf "grub2-themes"
+fi
 grub-mkconfig -o /boot/grub/grub.cfg >/dev/null 2>/dev/null
+if [ $? -ne 0 ]; then
+	echo -e "${BRed}Failed to generate grub configuration. Skipping. Be careful !${NC}"
+fi
 
 # VPN configuration
 echo "Setting up VPN..."
