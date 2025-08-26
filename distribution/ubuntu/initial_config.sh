@@ -8,3 +8,7 @@ disable_unwanted_extensions() {
 WHEEL_GROUP="sudo"
 
 disable_unwanted_extensions
+
+# Enable docker IPv4 forwarding, to allow LXD to work along it :)
+echo "net.ipv4.conf.all.forwarding=1" > /etc/sysctl.d/99-forwarding.conf
+sysctl net.ipv4.conf.all.forwarding=1
