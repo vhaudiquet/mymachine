@@ -51,6 +51,8 @@ PACKAGES=(
   wireguard-tools
   # QEMU
   qemu-system
+  # Others
+  pre-commit
 )
 
 EXTRA_PACKAGES=(

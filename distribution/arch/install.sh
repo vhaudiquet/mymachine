@@ -180,6 +180,8 @@ PACKAGES=(
 	kubectl
 	kubectx
 	docker-compose
+	# Others
+	pre-commit
 )
 
 EXTRA_PACKAGES=(
