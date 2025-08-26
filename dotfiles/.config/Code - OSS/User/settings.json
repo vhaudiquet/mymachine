@@ -31,4 +31,5 @@
     "telemetry.feedback.enabled": false,
     "telemetry.telemetryLevel": "off",
     "docker.lsp.telemetry": "off",
+    "llama-vscode.enabled": false,
 }
