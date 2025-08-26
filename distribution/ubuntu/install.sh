@@ -107,6 +107,11 @@ install_kubectl() {
   apt-get install -y kubectl
 }
 
+install_ligconsolata() {
+  curl -L -O https://github.com/googlefonts/Inconsolata/archive/refs/tags/v3.000.zip && unzip v3.000.zip \
+  && cp Inconsolata-3.000/fonts/otf/*.otf "/usr/local/share/fonts/" && rm -rf Inconsolata-3.000 v3.000.zip
+}
+
 export EXTRA_INSTALL_MESSAGE="Installing snap packages"
 extra_init() {
   # Install ghostty
@@ -118,6 +123,11 @@ extra_init() {
   fi
   erase_text "ghostty"
 
+  # Install 'ligconsolata' font
+  install_ligconsolata >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo -e "${BRed}Could not install Ligconsolata font. Skipping.${NC}"
+  fi
 
   # Install VSCode
   # NOTE: would be better to install code-oss, and features+marketplace
