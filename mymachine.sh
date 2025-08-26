@@ -193,14 +193,21 @@ fi
 # Install dotfiles, without overwriting
 source "${script_dir}/dotfiles.sh"
 
-# Setup GRUB theme
+# Setup GRUB theme, detecting screen resolution
 echo "Setting up GRUB theme..."
+Xaxis=$(xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f1)
+if [ $? -ne 0 ]; then
+	Xaxis=1920
+fi
+Yaxis=$(xrandr --current | grep '*' | uniq | awk '{print $1}' | cut -d 'x' -f2)
+if [ $? -ne 0 ]; then
+	Yaxis=1080
+fi
 git clone https://github.com/vinceliuice/grub2-themes >/dev/null 2>&1
 if [ $? -ne 0 ]; then
 	echo -e "${BRed}Could not download grub2 theme. Skipping.${NC}"
 else
-	# TODO: auto-detect screen resolution
-	cd grub2-themes && chmod +x install.sh && ./install.sh -t vimix >/dev/null 2>&1 && cd ..
+	cd grub2-themes && chmod +x install.sh && ./install.sh -t vimix -c ${Xaxis}x${Yaxis} >/dev/null 2>&1 && cd ..
 	if [ $? -ne 0 ]; then
 		echo -e "${BRed}Could not install grub2 theme. Skipping.${NC}"
 	fi
