@@ -23,10 +23,10 @@ configure_gnome_settings() {
     ${DBUS_LAUNCH} dconf write /org/gnome/shell/favorite-apps \
     "['org.gnome.Nautilus.desktop', \
     'com.mitchellh.ghostty.desktop', \
-    'zen.desktop', 'app.zen_browser.zen.desktop', 'zen-browser_zen-browser.desktop',\
+    'zen.desktop', 'app.zen_browser.zen.desktop', 'zen-browser_zen-browser.desktop', \
     'code-oss.desktop', 'code_code.desktop', \
     'org.kicad.kicad.desktop', \
-    'android-studio.desktop', 'android-studio_android-studio.desktop'\
+    'android-studio.desktop', 'android-studio_android-studio.desktop', \
     'discord.desktop', 'discord_discord.desktop', \
     'org.gnome.Calculator.desktop', \
     'org.gnome.TextEditor.desktop', \

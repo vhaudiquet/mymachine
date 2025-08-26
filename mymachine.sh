@@ -57,8 +57,8 @@ if ! id "${USERNAME}" >/dev/null 2>&1; then
 	fi
 	if [ -z "${PASSWORD}" ]; then
 		read -s -p "Password: " PASSWORD
+		echo ""
 	fi
-	echo ""
 fi
 if [ -z "${EMAIL}" ]; then
 	EMAIL=$(git config --global user.email)
@@ -70,11 +70,31 @@ if [ -z "${USER_PICTURE_URL}" ] && [ ! -f "/var/lib/AccountsService/icons/${USER
 	read -p "User profile picture URL (leave blank for none): " USER_PICTURE_URL
 fi
 
+# Handle Bitwarden authentication
+export BW_SESSION
+source "${script_dir}/bitwarden.sh"
+if ! bitwarden_is_authenticated; then
+	if [ -z "${BW_CLIENTID}" ]; then
+		read -p "Bitwarden client_id: " BW_CLIENTID
+	fi
+	if [ -z "${BW_CLIENTSECRET}" ]; then
+		read -p "Bitwarden client_secret: " BW_CLIENTSECRET
+	fi
+fi
+if bitwarden_is_locked; then
+	if [ -z "${BW_PASSWORD}" ]; then
+		read -s -p "Bitwarden password: " BW_PASSWORD
+		echo ""
+	fi
+fi
+
 # Make sure we are running as root
 if [[ $EUID -ne 0 ]]; then
     # If we are not running as root, try to relaunch ourselves as root
     echo -e "${BNC}Testing root access...${NC}"
-    sudo bash -c "USERNAME=${USERNAME} GIT_USER=${GIT_USER} EMAIL=${EMAIL} USER_COMMENT=${USER_COMMENT} USER_PICTURE_URL=${USER_PICTURE_URL} PASSWORD=${PASSWORD} ${script_dir}/${script_name}"
+    sudo bash -c "USERNAME=${USERNAME} GIT_USER=${GIT_USER} EMAIL=${EMAIL} USER_COMMENT=${USER_COMMENT} \
+	USER_PICTURE_URL=${USER_PICTURE_URL} PASSWORD=${PASSWORD} BW_CLIENTID=${BW_CLIENTID} BW_CLIENTSECRET=${BW_CLIENTSECRET} \
+	BW_PASSWORD=${BW_PASSWORD} BW_SESSION=${BW_SESSION} ${script_dir}/${script_name}"
 	exit $?
 else
 	echo -e "${BNC}Root access obtained.${NC}"
@@ -218,6 +238,45 @@ if [ $? -ne 0 ]; then
 	echo -e "${BRed}Failed to generate grub configuration. Skipping. Be careful !${NC}"
 fi
 
+# Login to Bitwarden
+if ! bitwarden_is_authenticated; then
+	if [ ! -z "${BW_CLIENTID}" ] && [ ! -z "${BW_CLIENTSECRET}" ]; then
+		BW_CLIENTID="${BW_CLIENTID}" BW_CLIENTSECRET="${BW_CLIENTSECRET}" bw login --apikey >/dev/null 2>&1
+	fi
+fi
+if bitwarden_is_authenticated && bitwarden_is_locked; then
+	if [ ! -z "${BW_PASSWORD}" ]; then
+		export BW_SESSION=$(bw unlock --raw ${BW_PASSWORD})
+	fi
+fi
+if ! bitwarden_is_locked; then
+	bw sync >/dev/null 2>&1
+
+	# Connect github cli using GH_TOKEN special field, if needed
+	gh auth status >/dev/null 2>&1
+	if [ $? -ne 0 ]; then
+		GH_TOKEN=$(bw get item github.com |jq -r '.fields[]|select(.name=="GH_TOKEN")|.value')
+		if [ $? -ne 0 ] && [ ! -z GH_TOKEN ]; then
+			GH_TOKEN="${GH_TOKEN}" gh auth login -p https -h github.com >/dev/null 2>&1
+			gh auth setup-git --hostname github.com
+		fi
+	fi
+
+	# Obtain kubectl config
+	if [ ! -f "/home/${USERNAME}/.kube/config" ]; then
+		KUBE=$(bw get item kube)
+		if [ $? -eq 0 ]; then
+			sudo -u ${USERNAME} mkdir -p "/home/${USERNAME}/.kube/"
+			OBJECT_ID=$(echo "${KUBE}" |jq -r '.id')
+			ATTACHMENT_ID=$(echo "${KUBE}" |jq -r '.attachments[]|select(.fileName=="config")|.id')
+			bw get attachment "${ATTACHMENT_ID}" --itemid "${OBJECT_ID}" --raw >"/home/${USERNAME}/.kube/config" 2>/dev/null
+			if [ $? -ne 0 ]; then
+				echo -e "${BRed}Could not get .kube/config attachment from bitwarden. Skipping.${NC}"
+			fi
+		fi
+	fi
+fi
+
 # VPN configuration
 echo "Setting up VPN..."
 # sudo -u ${USERNAME} mkdir /home/${USERNAME}/.wireguard
@@ -237,5 +296,5 @@ if [ "$MICROCODE_INSTALLED" == "false" ]; then
 	fi
 fi
 echo "To use WireGuard, don't forget to add this client on VPN server (your private key is under ~/.wireguard/privatekey)"
-echo "To use GitHub, you need to use 'gh auth login' to connect to GitHub"
+echo "It is not possible to install browser extensions automatically, so you have to install them manually (Bitwarden)"
 echo -e "${BNC}Goodbye ! Make sure to ${BGreen}reboot${NC}${BNC} to apply all changes !${NC}"

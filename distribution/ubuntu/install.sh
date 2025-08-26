@@ -62,6 +62,7 @@ EXTRA_PACKAGES=(
   revolt-desktop
   bitwarden
   spotify
+  bw
 )
 
 install_package_command() {
@@ -142,33 +143,52 @@ extra_init() {
   # Install android-studio
   echo -ne "android-studio"
   snap install android-studio --classic >/dev/null 2>&1
-  erase_text "android-studio"
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo -e "${BRed}Could not install android-studio. Skipping.${NC}"
+  else
+    erase_text "android-studio"
+  fi
   
   # TODO: Install zen browser using official :) snap
-  curl -L -O https://git.vhaudiquet.fr/vhaudiquet/zen-browser-snap/releases/download/testing/zen-browser_1.14.11b_amd64.snap
-  snap install ./zen-browser_1.14.11b_amd64.snap --dangerous
+  echo -ne "zen-browser"
+  curl -L -O https://git.vhaudiquet.fr/vhaudiquet/zen-browser-snap/releases/download/testing/zen-browser_1.14.11b_amd64.snap >/dev/null 2>&1
+  snap install ./zen-browser_1.14.11b_amd64.snap --dangerous >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo -e "${BRed}Could not install zen-browser. Skipping.${NC}"
+  else
+    erase_text "zen-browser"
+  fi
+  rm -f ./zen-browser_1.14.11b_amd64.snap
 
   echo -ne "github-cli"
   install_github_cli >/dev/null 2>&1
   if [ $? -ne 0 ]; then
+    echo ""
     echo -e "${BRed}Could not install github-cli. Skipping.${NC}"
+  else
+    erase_text "github-cli"
   fi
-  erase_text "github-cli"
 
   # Docker, Kubectl
   echo -ne "docker"
   install_docker >/dev/null 2>&1
   if [ $? -ne 0 ]; then
+    echo ""
     echo -e "${BRed}Could not install docker. Skipping.${NC}"
+  else
+    erase_text "docker"
   fi
-  erase_text "docker"
 
   echo -ne "kubectl"
   install_kubectl >/dev/null 2>&1
   if [ $? -ne 0 ]; then
+    echo ""
     echo -e "${BRed}Could not install kubectl. Skipping.${NC}"
+  else
+    erase_text "kubectl"
   fi
-  erase_text "kubectl"
 }
 
 extra_finish() {

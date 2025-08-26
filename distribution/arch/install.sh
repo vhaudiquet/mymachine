@@ -175,6 +175,7 @@ PACKAGES=(
 	vde2
 	# Bitwarden, password manager
 	bitwarden
+	bitwarden-cli
 	# Docker/Kube
 	docker
 	kubectl
