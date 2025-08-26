@@ -106,6 +106,13 @@ fi
 
 # Install packages
 source ${script_dir}/distribution/${ID}/install.sh
+erase_text() {
+	# Remove text from terminal
+	count=$(echo "${1}" | wc -m)
+	for ((i=1; i<$count; i++)); do echo -ne '\b'; done
+	for ((i=1; i<$count; i++)); do echo -ne ' '; done
+	for ((i=1; i<$count; i++)); do echo -ne '\b'; done
+}
 install_package() {
 	package="${1}"
 	command="${2}"
@@ -118,11 +125,7 @@ install_package() {
 		echo -e "\n${BRed}Failed to install package '${package}'. Skipping."
 	fi
 
-	# Remove current package name from terminal
-	count=$(echo "${package}" | wc -m)
-	for ((i=1; i<$count; i++)); do echo -ne '\b'; done
-	for ((i=1; i<$count; i++)); do echo -ne ' '; done
-	for ((i=1; i<$count; i++)); do echo -ne '\b'; done
+	erase_text "${package}"
 }
 
 refresh_package_db
@@ -138,8 +141,9 @@ done
 echo ""
 
 # Install distribution-specific extra packages
-echo -e "Initializing extra package installation..."
+echo -ne "Initializing extra package installation...  "
 extra_init
+echo ""
 echo -ne "${EXTRA_INSTALL_MESSAGE}...  "
 for package in "${EXTRA_PACKAGES[@]}"; do
 	install_package "${package}" install_extra_command
@@ -165,6 +169,12 @@ fi
 export VSCODE_EXTENSIONS="${script_dir}/vscode-extensions.txt"
 echo -ne "Installing VSCode extensions...      "
 i=0 total=$(wc -l < ${VSCODE_EXTENSIONS}); while read ext; do
+  # Ignore commented extensions
+  if [[ "${ext}" == \#* ]]; then
+    i=$((i + 1))
+	continue
+  fi
+
   # TODO: Here we assume extensions are at most a 2-digit number ; change that :)
   istr=$(printf "%02d" $i)
   echo -ne "\b\b\b\b\b${istr}/${total}"
@@ -181,9 +191,7 @@ if [[ $i = $total ]]; then
 fi
 
 # Install dotfiles, without overwriting
-echo "Installing dotfiles..."
-cp -r --update=none ${script_dir}/dotfiles/. /home/${USERNAME}/
-cat ${script_dir}/dotfiles/.config/git/config | envsubst '$GIT_USER $EMAIL' >/home/${USERNAME}/.config/git/config
+source "${script_dir}/dotfiles.sh"
 
 # Setup GRUB theme
 echo "Setting up GRUB theme..."
@@ -223,4 +231,4 @@ if [ "$MICROCODE_INSTALLED" == "false" ]; then
 fi
 echo "To use WireGuard, don't forget to add this client on VPN server (your private key is under ~/.wireguard/privatekey)"
 echo "To use GitHub, you need to use 'gh auth login' to connect to GitHub"
-echo -e "${BNC}Goodbye ! Make sure to ${BGreen}reboot${BNC} to apply all changes !${NC}"
+echo -e "${BNC}Goodbye ! Make sure to ${BGreen}reboot${NC}${BNC} to apply all changes !${NC}"

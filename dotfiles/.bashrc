@@ -1,9 +1,12 @@
-#
+# mymachine
 # ~/.bashrc
 #
 
 # If not running interactively, don't do anything
 [[ $- != *i* ]] && return
+
+# OS-specific information
+source /etc/os-release
 
 # History file settings
 # No duplicate lines / lines starting with space in history
@@ -34,7 +37,12 @@ fi
 source /home/${USER}/.config/prompt.sh
 
 # Bitwarden SSH agent
-export SSH_AUTH_SOCK=/home/${USER}/.bitwarden-ssh-agent.sock
+if [ "${ID}" = "ubuntu" ]; then
+    # On Ubuntu, Bitwarden snap is used, which changes the sock path
+    export SSH_AUTH_SOCK=/home/${USER}/snap/bitwarden/current/.bitwarden-ssh-agent.sock
+else
+    export SSH_AUTH_SOCK=/home/${USER}/.bitwarden-ssh-agent.sock
+fi
 
 # PATH modifications
 # Local binaries
@@ -48,3 +56,5 @@ alias e=${EDITOR}
 alias l="ls -lla"
 alias c="clear"
 alias k="kubectl"
+
+### End of default bashrc, append anything here

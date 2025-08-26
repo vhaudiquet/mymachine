@@ -33,7 +33,7 @@ ms-vscode.hexeditor
 ms-vscode.makefile-tools
 ms-vscode.remote-explorer
 ms-vscode.vscode-serial-monitor
-nvarner.typst-lsp
+# nvarner.typst-lsp
 piousdeer.adwaita-theme
 pkief.material-icon-theme
 pkief.material-product-icons

@@ -99,7 +99,7 @@ install_docker() {
 }
 
 install_kubectl() {
-  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
+  curl -fsSL https://pkgs.k8s.io/core:/stable:/v1.33/deb/Release.key | gpg --batch --yes --dearmor -o /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   chmod 644 /etc/apt/keyrings/kubernetes-apt-keyring.gpg
   echo 'deb [signed-by=/etc/apt/keyrings/kubernetes-apt-keyring.gpg] https://pkgs.k8s.io/core:/stable:/v1.33/deb/ /' | tee /etc/apt/sources.list.d/kubernetes.list
   chmod 644 /etc/apt/sources.list.d/kubernetes.list
@@ -110,34 +110,51 @@ install_kubectl() {
 export EXTRA_INSTALL_MESSAGE="Installing snap packages"
 extra_init() {
   # Install ghostty
+  echo -ne "ghostty"
+  # TODO: use a ppa / something updatable
   /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >/dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${BRed}Could not install ghostty. Skipping.${NC}"
   fi
+  erase_text "ghostty"
 
-  # TODO: Install code-oss, and features+marketplace
+
+  # Install VSCode
+  # NOTE: would be better to install code-oss, and features+marketplace
+  echo -ne "code"
+  sudo snap install code --classic >/dev/null 2>&1
+  erase_text "code"
+
   # TODO: Install jellyfin-media-player
   
   # Install android-studio
-  sudo snap install android-studio --classic >/dev/null 2>&1
-
+  echo -ne "android-studio"
+  snap install android-studio --classic >/dev/null 2>&1
+  erase_text "android-studio"
+  
   # TODO: Install zen browser
 
+  echo -ne "github-cli"
   install_github_cli >/dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${BRed}Could not install github-cli. Skipping.${NC}"
   fi
+  erase_text "github-cli"
 
   # Docker, Kubectl
+  echo -ne "docker"
   install_docker >/dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${BRed}Could not install docker. Skipping.${NC}"
   fi
+  erase_text "docker"
 
+  echo -ne "kubectl"
   install_kubectl >/dev/null 2>&1
   if [ $? -ne 0 ]; then
     echo -e "${BRed}Could not install kubectl. Skipping.${NC}"
   fi
+  erase_text "kubectl"
 }
 
 extra_finish() {

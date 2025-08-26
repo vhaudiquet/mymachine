@@ -26,5 +26,9 @@
     "workbench.preferredDarkColorTheme": "Adwaita Dark",
     "workbench.preferredLightColorTheme": "Adwaita Light",
     "editor.renderLineHighlight": "none",
-    "workbench.tree.indent": 12
+    "workbench.tree.indent": 12,
+    "redhat.telemetry.enabled": false,
+    "telemetry.feedback.enabled": false,
+    "telemetry.telemetryLevel": "off",
+    "docker.lsp.telemetry": "off",
 }
