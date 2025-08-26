@@ -142,7 +142,9 @@ extra_init() {
   snap install android-studio --classic >/dev/null 2>&1
   erase_text "android-studio"
   
-  # TODO: Install zen browser
+  # TODO: Install zen browser using official :) snap
+  curl -L -O https://git.vhaudiquet.fr/vhaudiquet/zen-browser-snap/releases/download/testing/zen-browser_1.14.11b_amd64.snap
+  snap install ./zen-browser_1.14.11b_amd64.snap --dangerous
 
   echo -ne "github-cli"
   install_github_cli >/dev/null 2>&1
