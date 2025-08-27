@@ -175,3 +175,4 @@ echo "Setting up Gnome settings..."
 configure_gnome_settings
 configure_dash2dock_settings
 configure_wallpapers_settings
+configure_misc_settings
