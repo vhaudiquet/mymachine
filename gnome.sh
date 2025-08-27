@@ -169,7 +169,6 @@ fi
 
 # Enable needed default extensions
 ${DBUS_LAUNCH} gnome-extensions enable user-theme@gnome-shell-extensions.gcampax.github.com
-${DBUS_LAUNCH} gnome-extensions enable system-monitor@gnome-shell-extensions.gcampax.github.com
 
 echo "Setting up Gnome settings..."
 

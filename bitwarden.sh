@@ -1,19 +1,24 @@
 #!/usr/bin/env bash
 
-alias bw="sudo -u ${USERNAME} bw"
+BW() {
+    sudo -u ${USERNAME} \
+    BW_CLIENTID="${BW_CLIENTID}" BW_CLIENTSECRET="${BW_CLIENTSECRET}" \
+    BW_PASSWORD="${BW_PASSWORD}" BW_SESSION=${BW_SESSION} BITWARDENCLI_APPDATA_DIR="${BITWARDENCLI_APPDATA_DIR}" \
+    bw $@ 2>/dev/null
+}
 
 bitwarden_is_authenticated() {
-    status=$(bw status 2>/dev/null |jq -r ".status" 2>/dev/null)
+    status=$(BW status |jq -r ".status" 2>/dev/null)
     if [ -z "${status}" ]; then
-        return false
+        false
     else 
         [[ ! ${status} == "unauthenticated" ]]
     fi
 }
 bitwarden_is_locked() {
-    status=$(bw status 2>/dev/null |jq -r ".status" 2>/dev/null)
+    status=$(BW status 2>/dev/null |jq -r ".status" 2>/dev/null)
     if [ -z "${status}" ]; then
-        return true
+        true
     else
         [[ ${status} == "locked" ]] || ! bitwarden_is_authenticated
     fi

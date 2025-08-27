@@ -37,3 +37,5 @@ WHEEL_GROUP="wheel"
 
 configure_pacman
 create_user
+
+export BITWARDENCLI_APPDATA_DIR="/home/${USERNAME}/.config/Bitwarden CLI"

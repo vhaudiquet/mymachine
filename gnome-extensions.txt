@@ -4,3 +4,4 @@ https://extensions.gnome.org/extension/2645/brightness-control-using-ddcutil/
 https://extensions.gnome.org/extension/517/caffeine/
 https://extensions.gnome.org/extension/3843/just-perfection/
 https://extensions.gnome.org/extension/4099/no-overview/
+https://extensions.gnome.org/extension/1460/vitals/

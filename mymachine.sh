@@ -247,7 +247,8 @@ fi
 # Login to Bitwarden
 if ! bitwarden_is_authenticated; then
 	if [ ! -z "${BW_CLIENTID}" ] && [ ! -z "${BW_CLIENTSECRET}" ]; then
-		BW_CLIENTID="${BW_CLIENTID}" BW_CLIENTSECRET="${BW_CLIENTSECRET}" bw login --apikey >/dev/null 2>&1
+		echo "Login in to Bitwarden..."
+		BW_CLIENTID="${BW_CLIENTID}" BW_CLIENTSECRET="${BW_CLIENTSECRET}" BW login --apikey >/dev/null
 		if [ $? -ne 0 ]; then
 			echo -e "${BRed}Could not login to Bitwarden. Skipping.${NC}"
 		fi
@@ -257,7 +258,8 @@ if ! bitwarden_is_authenticated; then
 fi
 if bitwarden_is_authenticated && bitwarden_is_locked; then
 	if [ ! -z "${BW_PASSWORD}" ]; then
-		export BW_SESSION=$(bw unlock --raw ${BW_PASSWORD})
+		echo "Unlocking Bitwarden vault..."
+		export BW_SESSION=$(BW unlock --raw ${BW_PASSWORD})
 		if [ -z "${BW_SESSION}" ]; then
 			echo -e "${BRed}Could not unlock Bitwarden vault. Skipping.${NC}"
 		fi
@@ -267,18 +269,23 @@ if ! bitwarden_is_locked; then
 	echo -n "Authenticating with bitwarden...  "
 
 	echo -n "sync" 
-	bw sync >/dev/null 2>&1
+	BW sync >/dev/null 2>&1
 	erase_text "sync"
 
 	# Connect github cli using GH_TOKEN special field, if needed
-	gh auth status >/dev/null 2>&1
+	sudo -u ${USERNAME} gh auth status >/dev/null 2>&1
 	if [ $? -ne 0 ]; then
 		echo -n "github-cli"
-		GH_TOKEN=$(bw get item github.com 2>/dev/null |jq -r '.fields[]|select(.name=="GH_TOKEN")|.value' 2>/dev/null)
+		GH_TOKEN=$(BW get item github.com |jq -r '.fields[]|select(.name=="GH_TOKEN")|.value' 2>/dev/null)
 		if [ $? -eq 0 ] && [ ! -z "${GH_TOKEN}" ]; then
-			GH_TOKEN="${GH_TOKEN}" gh auth login -p https -h github.com >/dev/null 2>&1
-			gh auth setup-git --hostname github.com >/dev/null 2>&1
-			erase_text "github-cli"
+			echo "${GH_TOKEN}" |sudo -u ${USERNAME} gh auth login -p https -h github.com --with-token 2>/dev/null
+			if [ $? -ne 0 ]; then
+				erase_text "github-cli"
+				echo -ne "${BRed}github-cli${NC}  "
+			else
+				sudo -u ${USERNAME} gh auth setup-git --hostname github.com >/dev/null 2>&1
+				erase_text "github-cli"
+			fi
 		else
 			erase_text "github-cli"
 			echo -ne "${BRed}github-cli${NC}  "
@@ -288,12 +295,12 @@ if ! bitwarden_is_locked; then
 	# Obtain kubectl config
 	if [ ! -f "/home/${USERNAME}/.kube/config" ]; then
 		echo -n "kubectl"
-		KUBE=$(bw get item kube)
+		KUBE=$(BW get item kube)
 		if [ $? -eq 0 ]; then
 			sudo -u ${USERNAME} mkdir -p "/home/${USERNAME}/.kube/"
 			OBJECT_ID=$(echo "${KUBE}" |jq -r '.id')
 			ATTACHMENT_ID=$(echo "${KUBE}" |jq -r '.attachments[]|select(.fileName=="config")|.id')
-			bw get attachment "${ATTACHMENT_ID}" --itemid "${OBJECT_ID}" --raw >"/home/${USERNAME}/.kube/config" 2>/dev/null
+			BW get attachment "${ATTACHMENT_ID}" --itemid "${OBJECT_ID}" --raw >"/home/${USERNAME}/.kube/config" 2>/dev/null
 			if [ $? -ne 0 ]; then
 				echo -e "\n${BRed}Could not get .kube/config attachment from bitwarden. Skipping.${NC}"
 			fi
