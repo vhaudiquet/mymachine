@@ -113,7 +113,7 @@ install_kubectl() {
 
 install_ligconsolata() {
   curl -L -O https://github.com/googlefonts/Inconsolata/archive/refs/tags/v3.000.zip && unzip v3.000.zip \
-  && cp Inconsolata-3.000/fonts/otf/*.otf "/usr/local/share/fonts/" && rm -rf Inconsolata-3.000 v3.000.zip
+  && cp Inconsolata-3.000/fonts/ttf/*.ttf "/usr/local/share/fonts/" && rm -rf Inconsolata-3.000 v3.000.zip
 }
 
 install_sops() {
@@ -124,13 +124,16 @@ install_sops() {
 export EXTRA_INSTALL_MESSAGE="Installing snap packages"
 extra_init() {
   # Install ghostty
-  echo -ne "ghostty"
-  # TODO: use a ppa / something updatable
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >/dev/null 2>&1
+  ghostty=$(which ghostty >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
-    echo -e "${BRed}Could not install ghostty. Skipping.${NC}"
+    echo -ne "ghostty"
+    # TODO: use a ppa / something updatable
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo -e "${BRed}Could not install ghostty. Skipping.${NC}"
+    fi
+    erase_text "ghostty"
   fi
-  erase_text "ghostty"
 
   # Install 'ligconsolata' font
   install_ligconsolata >/dev/null 2>&1
@@ -157,53 +160,68 @@ extra_init() {
   fi
   
   # TODO: Install zen browser using official :) snap
-  echo -ne "zen-browser"
-  curl -L -O https://git.vhaudiquet.fr/vhaudiquet/zen-browser-snap/releases/download/testing/zen-browser_1.14.11b_amd64.snap >/dev/null 2>&1
-  snap install ./zen-browser_1.14.11b_amd64.snap --dangerous >/dev/null 2>&1
+  zen_browser=$(which zen-browser >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
-    echo ""
-    echo -e "${BRed}Could not install zen-browser. Skipping.${NC}"
-  else
-    erase_text "zen-browser"
+    echo -ne "zen-browser"
+    curl -L -O https://git.vhaudiquet.fr/vhaudiquet/zen-browser-snap/releases/download/testing/zen-browser_1.14.11b_amd64.snap >/dev/null 2>&1
+    snap install ./zen-browser_1.14.11b_amd64.snap --dangerous >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo ""
+      echo -e "${BRed}Could not install zen-browser. Skipping.${NC}"
+    else
+      erase_text "zen-browser"
+    fi
+    rm -f ./zen-browser_1.14.11b_amd64.snap
   fi
-  rm -f ./zen-browser_1.14.11b_amd64.snap
 
-  echo -ne "github-cli"
-  install_github_cli >/dev/null 2>&1
+  github_cli=$(which gh >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
-    echo ""
-    echo -e "${BRed}Could not install github-cli. Skipping.${NC}"
-  else
-    erase_text "github-cli"
+    echo -ne "github-cli"
+    install_github_cli >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo ""
+      echo -e "${BRed}Could not install github-cli. Skipping.${NC}"
+    else
+      erase_text "github-cli"
+    fi
   fi
 
   # Docker, Kubectl
-  echo -ne "docker"
-  install_docker >/dev/null 2>&1
+  docker=$(which docker >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
-    echo ""
-    echo -e "${BRed}Could not install docker. Skipping.${NC}"
-  else
-    erase_text "docker"
+    echo -ne "docker"
+    install_docker >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo ""
+      echo -e "${BRed}Could not install docker. Skipping.${NC}"
+    else
+      erase_text "docker"
+    fi
   fi
 
-  echo -ne "kubectl"
-  install_kubectl >/dev/null 2>&1
-  if [ $? -ne 0 ]; then
-    echo ""
-    echo -e "${BRed}Could not install kubectl. Skipping.${NC}"
-  else
-    erase_text "kubectl"
+  kubectl=$(which kubectl >/dev/null 2>&1)
+  if [ $? -ne 0 ]; then 
+    echo -ne "kubectl"
+    install_kubectl >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo ""
+      echo -e "${BRed}Could not install kubectl. Skipping.${NC}"
+    else
+      erase_text "kubectl"
+    fi
   fi
 
   # SOPS
-  echo -ne "sops"
-  install_sops >/dev/null 2>&1
+  sops=$(which sops >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
-    echo ""
-    echo -e "${BRed}Could not install sops. Skipping.${NC}"
-  else
-    erase_text "sops"
+    echo -ne "sops"
+    install_sops >/dev/null 2>&1
+    if [ $? -ne 0 ]; then
+      echo ""
+      echo -e "${BRed}Could not install sops. Skipping.${NC}"
+    else
+      erase_text "sops"
+    fi
   fi
 }
 
