@@ -183,6 +183,7 @@ PACKAGES=(
 	docker-compose
 	# Others
 	pre-commit
+	sops
 )
 
 EXTRA_PACKAGES=(

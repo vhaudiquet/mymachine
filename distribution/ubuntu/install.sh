@@ -115,6 +115,11 @@ install_ligconsolata() {
   && cp Inconsolata-3.000/fonts/otf/*.otf "/usr/local/share/fonts/" && rm -rf Inconsolata-3.000 v3.000.zip
 }
 
+install_sops() {
+  curl -LO https://github.com/getsops/sops/releases/download/v3.10.2/sops-v3.10.2.linux.amd64 && \
+  mv sops-v3.10.2.linux.amd64 /usr/local/bin/sops && chmod +x /usr/local/bin/sops
+}
+
 export EXTRA_INSTALL_MESSAGE="Installing snap packages"
 extra_init() {
   # Install ghostty
@@ -188,6 +193,16 @@ extra_init() {
     echo -e "${BRed}Could not install kubectl. Skipping.${NC}"
   else
     erase_text "kubectl"
+  fi
+
+  # SOPS
+  echo -ne "sops"
+  install_sops >/dev/null 2>&1
+  if [ $? -ne 0 ]; then
+    echo ""
+    echo -e "${BRed}Could not install sops. Skipping.${NC}"
+  else
+    erase_text "sops"
   fi
 }
 
