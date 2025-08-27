@@ -53,6 +53,7 @@ PACKAGES=(
   qemu-system
   # Others
   pre-commit
+  dbus-x11
 )
 
 EXTRA_PACKAGES=(
