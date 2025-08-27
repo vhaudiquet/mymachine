@@ -6,13 +6,15 @@ install_dotfile_ifnot() {
 }
 
 echo "Installing dotfiles..."
-# cp -r --update=none ${script_dir}/dotfiles/. /home/${USERNAME}/
+sudo -u ${USERNAME} mkdir -p /home/${USERNAME}/.config/git
 cat ${script_dir}/dotfiles/.config/git/config | envsubst '$GIT_USER $EMAIL' >/home/${USERNAME}/.config/git/config
+chown ${USERNAME}:${USERNAME} /home/${USERNAME}/.config/git/config
 
 # Install bashrc if not mymachine-installed
 if ! [[ "$(head -n 1 /home/${USERNAME}/.bashrc)" = "# mymachine" ]]; then
     sudo -u ${USERNAME} cp "${script_dir}/dotfiles/.bashrc" "/home/${USERNAME}/.bashrc"
 fi
+install_dotfile_ifnot .config/prompt.sh
 
 # Install code settings depending on which code is installed
 CODE_NAME="Code - OSS"

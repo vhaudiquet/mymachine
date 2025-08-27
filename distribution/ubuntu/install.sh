@@ -207,6 +207,11 @@ extra_init() {
   fi
 }
 
+disable_unwanted_extensions() {
+    # Disable default Ubuntu gnome extensions
+    sudo -u ${USERNAME} gnome-extensions disable ding@rastersoft.com # Desktop Icons
+}
+
 extra_finish() {
-  echo -ne ""
+  disable_unwanted_extensions
 }
