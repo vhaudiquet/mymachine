@@ -184,6 +184,7 @@ PACKAGES=(
 	# Others
 	pre-commit
 	sops
+	chromium
 )
 
 EXTRA_PACKAGES=(

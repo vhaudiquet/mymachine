@@ -64,6 +64,7 @@ EXTRA_PACKAGES=(
   bitwarden
   spotify
   bw
+  chromium
 )
 
 install_package_command() {
