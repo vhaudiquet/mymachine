@@ -185,6 +185,7 @@ PACKAGES=(
 	pre-commit
 	sops
 	chromium
+	obs-studio
 )
 
 EXTRA_PACKAGES=(

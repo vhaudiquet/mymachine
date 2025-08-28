@@ -54,6 +54,7 @@ PACKAGES=(
   # Others
   pre-commit
   dbus-x11
+  obs-studio
 )
 
 EXTRA_PACKAGES=(
