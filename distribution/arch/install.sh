@@ -186,6 +186,7 @@ PACKAGES=(
 	sops
 	chromium
 	obs-studio
+	syncthing
 )
 
 EXTRA_PACKAGES=(

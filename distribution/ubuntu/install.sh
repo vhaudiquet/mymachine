@@ -55,6 +55,7 @@ PACKAGES=(
   pre-commit
   dbus-x11
   obs-studio
+  syncthing
 )
 
 EXTRA_PACKAGES=(
