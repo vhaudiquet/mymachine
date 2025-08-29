@@ -163,18 +163,19 @@ extra_init() {
   fi
   
   # TODO: Install zen browser using official :) snap
+  export ZEN_VERSION="1.15.2b"
   zen_browser=$(which zen-browser >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
     echo -ne "zen-browser"
-    curl -L -O https://git.vhaudiquet.fr/vhaudiquet/zen-browser-snap/releases/download/1.15b/zen-browser_1.15b_amd64.snap >/dev/null 2>&1
-    snap install ./zen-browser_1.15b_amd64.snap --dangerous >/dev/null 2>&1
+    curl -L -O https://git.vhaudiquet.fr/vhaudiquet/zen-browser-snap/releases/download/${ZEN_VERSION}/zen-browser_${ZEN_VERSION}_amd64.snap >/dev/null 2>&1
+    snap install ./zen-browser_${ZEN_VERSION}_amd64.snap --dangerous >/dev/null 2>&1
     if [ $? -ne 0 ]; then
       echo ""
       echo -e "${BRed}Could not install zen-browser. Skipping.${NC}"
     else
       erase_text "zen-browser"
     fi
-    rm -f ./zen-browser_1.15b_amd64.snap
+    rm -f ./zen-browser_${ZEN_VERSION}_amd64.snap
   fi
 
   github_cli=$(which gh >/dev/null 2>&1)
