@@ -68,7 +68,7 @@ configure_dash2dock_settings() {
 
 configure_wallpapers_settings() {
     if ! [ -d "/home/${USERNAME}/Images/Wallpapers" ]; then 
-        git clone --depth 1 https://github.com/vhaudiquet/wallpapers "/home/${USERNAME}/Images/Wallpapers" >/dev/null 2>&1
+        sudo -u ${USERNAME} git clone --depth 1 https://github.com/vhaudiquet/wallpapers "/home/${USERNAME}/Images/Wallpapers" >/dev/null 2>&1
         if [ $? -ne 0 ]; then
             echo -e "${BRed}Could not download wallpapers. Skipping.${NC}"
         fi
