@@ -197,6 +197,7 @@ EXTRA_PACKAGES=(
 	jellyfin-media-player
 	zen-browser-bin
 	spotify
+	localsend-bin
 )
 
 install_package_command() {

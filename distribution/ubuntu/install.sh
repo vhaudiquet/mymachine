@@ -67,6 +67,7 @@ EXTRA_PACKAGES=(
   spotify
   bw
   chromium
+  localsend
 )
 
 install_package_command() {
