@@ -56,6 +56,7 @@ PACKAGES=(
   dbus-x11
   obs-studio
   syncthing
+  nala
 )
 
 EXTRA_PACKAGES=(

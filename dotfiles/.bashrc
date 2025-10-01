@@ -56,5 +56,8 @@ alias e=${EDITOR}
 alias l="ls -lla"
 alias c="clear"
 alias k="kubectl"
+if [ "${ID}" = "ubuntu" ]; then
+    alias apt="sudo nala"
+fi
 
 ### End of default bashrc, append anything here
