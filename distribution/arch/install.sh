@@ -198,6 +198,7 @@ EXTRA_PACKAGES=(
 	zen-browser-bin
 	spotify
 	localsend-bin
+	notesnook-bin
 )
 
 install_package_command() {

@@ -84,6 +84,7 @@ EXTRA_PACKAGES=(
   bw
   chromium
   localsend
+  notesnook
 )
 
 install_package_command() {
