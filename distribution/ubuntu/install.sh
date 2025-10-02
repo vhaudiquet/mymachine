@@ -57,6 +57,21 @@ PACKAGES=(
   obs-studio
   syncthing
   nala
+  # Ubuntu dev tools
+  autopkgtest
+	build-essential
+	debconf-utils
+	debmake
+	dh-make
+	git-buildpackage
+	git-ubuntu
+	libvirt-daemon-system
+	pkg-config
+	quilt
+	sbuild
+	mmdebstrap
+	uidmap
+	ubuntu-dev-tools
 )
 
 EXTRA_PACKAGES=(
