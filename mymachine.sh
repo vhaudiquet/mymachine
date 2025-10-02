@@ -284,6 +284,10 @@ if ! bitwarden_is_locked; then
 			if [ $? -ne 0 ]; then
 				echo -e "\n${BRed}Could not get .kube/config attachment from bitwarden. Skipping.${NC}"
 			fi
+			chown ${USERNAME}:${USERNAME} "/home/${USERNAME}/.kube/config" 2>/dev/null
+			KEY_ATTACHMENT_ID=$(echo "${KUBE}" |jq -r '.attachments[]|select(.fileName=="private.gpg")|.id')
+			KEY=$(BW get attachment "${KEY_ATTACHMENT_ID}" --itemid "${OBJECT_ID}" --raw)
+			echo "${KEY}" | sudo -u ${USERNAME} gpg --batch --import >/dev/null 2>/dev/null
 		fi
 		erase_text "kubectl"
 	fi
@@ -299,7 +303,7 @@ if ! bitwarden_is_locked; then
 			echo -e "\n${BRed}Could not get gpg 'private.gpg' attachment from bitwarden. Skipping.${NC}"
 		fi
 		PASSPHRASE=$(echo "${GPG_PERSONAL_KEY}" |jq -r '.fields[]|select(.name=="Passphrase")|.value' 2>/dev/null)
-		echo "${KEY}" | gpg --batch --passphrase "${PASSPHRASE}" --import >/dev/null 2>/dev/null
+		echo "${KEY}" | sudo -u ${USERNAME} gpg --batch --passphrase "${PASSPHRASE}" --import >/dev/null 2>/dev/null
 		if [ $? -ne 0 ]; then
 			echo -e "\n${BRed}Could not import private gpg key. Skipping.${NC}"
 		fi
