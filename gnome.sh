@@ -14,10 +14,13 @@ configure_gnome_settings() {
     # Set alt-tab to current workspace only
     ${DBUS_LAUNCH} dconf write /org/gnome/shell/app-switcher/current-workspace-only true
 
-
-    # Configure gnome to use dark theme
+    # Adwaita theming: colors, icons, cursor
+    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/interface/accent-color "'teal'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/interface/cursor-theme "'Adwaita'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/interface/icon-theme "'Adwaita'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/interface/show-battery-percentage true
     ${DBUS_LAUNCH} dconf write /org/gnome/desktop/interface/color-scheme "'prefer-dark'"
-    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/interface/gtk-theme "'adw-gtk3-dark'"
+    ${DBUS_LAUNCH} dconf write /org/gnome/desktop/interface/gtk-theme "'Adwaita-dark'"
 
     # Set 'favorite' apps
     ${DBUS_LAUNCH} dconf write /org/gnome/shell/favorite-apps \
