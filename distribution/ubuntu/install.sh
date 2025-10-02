@@ -148,8 +148,7 @@ extra_init() {
   ghostty=$(which ghostty >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
     echo -ne "ghostty"
-    # TODO: use a ppa / something updatable
-    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/mkasberg/ghostty-ubuntu/HEAD/install.sh)" >/dev/null 2>&1
+    sudo snap install ghostty --classic >/dev/null 2>&1
     if [ $? -ne 0 ]; then
       echo -e "${BRed}Could not install ghostty. Skipping.${NC}"
     fi
