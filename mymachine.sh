@@ -288,6 +288,24 @@ if ! bitwarden_is_locked; then
 		erase_text "kubectl"
 	fi
 
+	# Obtain GPG keys
+	echo -n "gpg"
+	GPG_PERSONAL_KEY=$(BW get item gpg)
+	if [ $? -eq 0 ]; then
+		OBJECT_ID=$(echo "${GPG_PERSONAL_KEY}" |jq -r '.id')
+		ATTACHMENT_ID=$(echo "${GPG_PERSONAL_KEY}" |jq -r '.attachments[]|select(.fileName=="private.gpg")|.id')
+		KEY=$(BW get attachment "${ATTACHMENT_ID}" --itemid "${OBJECT_ID}" --raw)
+		if [ $? -ne 0 ]; then
+			echo -e "\n${BRed}Could not get gpg 'private.gpg' attachment from bitwarden. Skipping.${NC}"
+		fi
+		PASSPHRASE=$(echo "${GPG_PERSONAL_KEY}" |jq -r '.fields[]|select(.name=="Passphrase")|.value' 2>/dev/null)
+		echo "${KEY}" | gpg --batch --passphrase "${PASSPHRASE}" --import >/dev/null 2>/dev/null
+		if [ $? -ne 0 ]; then
+			echo -e "\n${BRed}Could not import private gpg key. Skipping.${NC}"
+		fi
+	fi
+	erase_text "gpg"
+
 	echo ""
 fi
 
