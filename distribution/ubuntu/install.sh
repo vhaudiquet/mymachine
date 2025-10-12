@@ -180,7 +180,7 @@ extra_init() {
   fi
   
   # TODO: Install zen browser using official :) snap
-  export ZEN_VERSION="1.15.2b"
+  export ZEN_VERSION="1.16.4b"
   zen_browser=$(which zen-browser >/dev/null 2>&1)
   if [ $? -ne 0 ]; then
     echo -ne "zen-browser"
