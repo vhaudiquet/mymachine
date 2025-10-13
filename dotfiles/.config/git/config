@@ -2,6 +2,12 @@
   name = ${GIT_USER}
   email = ${EMAIL}
 
+[gitubuntu]
+  lpuser = ${GIT_USER}
+
+[log]
+  decorate = short
+
 [core]
   compression = 9
   whitespace = error
@@ -14,6 +20,8 @@
 	helper = !/usr/bin/gh auth git-credential
 [credential "https://gist.github.com"]
 	helper = !/usr/bin/gh auth git-credential
+[url "git+ssh://${GIT_USER}@git.launchpad.net/"]
+  insteadof = "lp:"
 [credential]
 	helper = /usr/lib/git-core/git-credential-libsecret
 
