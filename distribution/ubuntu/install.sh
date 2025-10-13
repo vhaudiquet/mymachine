@@ -88,7 +88,7 @@ EXTRA_PACKAGES=(
 )
 
 install_package_command() {
-	apt-get install -y "${1}" >/dev/null 2>&1
+	DEBIAN_FRONTEND=noninteractive apt-get install -yqq "${1}" >/dev/null 2>&1
 }
 install_extra_command() {
   snap install "${1}" >/dev/null 2>&1
